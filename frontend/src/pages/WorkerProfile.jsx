@@ -54,7 +54,7 @@ export default function WorkerProfile() {
   const initials = worker.name?.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
 
   return (
-    <div className="max-w-lg mx-auto pb-8">
+    <div className="max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto pb-8">
       {/* Top bar */}
       <div className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-surface/80 backdrop-blur-lg border-b border-white/5">
         <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-white/60 hover:text-white transition">

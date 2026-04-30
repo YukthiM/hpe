@@ -102,8 +102,8 @@ function calcReputation(avgRating, completedJobs, idVerified) {
 
 function calcBadges(completedJobs, avgRating) {
   const badges = [];
-  if (completedJobs >= 1)  badges.push({ name: 'First Job', icon: '🎯', awardedAt: new Date() });
-  if (completedJobs >= 5)  badges.push({ name: 'Rising Star', icon: '⭐', awardedAt: new Date() });
+  if (completedJobs >= 1) badges.push({ name: 'First Job', icon: '🎯', awardedAt: new Date() });
+  if (completedJobs >= 5) badges.push({ name: 'Rising Star', icon: '⭐', awardedAt: new Date() });
   if (completedJobs >= 10) badges.push({ name: 'Pro Worker', icon: '🏆', awardedAt: new Date() });
   if (completedJobs >= 25) badges.push({ name: 'Expert', icon: '💎', awardedAt: new Date() });
   if (avgRating >= 4.8 && completedJobs >= 5) badges.push({ name: 'Top Rated', icon: '🥇', awardedAt: new Date() });

@@ -75,12 +75,12 @@ export default function WorkerCard({ worker }) {
           {worker.skills?.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2">
               {worker.skills.slice(0, 3).map((skill) => (
-                <span key={skill} className="text-xs bg-primary-500/15 text-primary-400 px-2 py-0.5 rounded-full">
+                <span key={skill} className="text-xs bg-primary-500/15 text-primary-700 dark:text-primary-400 px-2 py-0.5 rounded-full">
                   {skill}
                 </span>
               ))}
               {worker.skills.length > 3 && (
-                <span className="text-xs text-gray-300 dark:text-white/30">+{worker.skills.length - 3}</span>
+                <span className="text-xs" style={{ color: 'var(--text-faint)' }}>+{worker.skills.length - 3}</span>
               )}
             </div>
           )}

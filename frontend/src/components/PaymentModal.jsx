@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { bookingsAPI } from '../api';
+import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { X, CreditCard, Wallet, Smartphone, CheckCircle } from 'lucide-react';
 
@@ -10,11 +11,16 @@ const methods = [
 ];
 
 export default function PaymentModal({ bookingId, onSuccess, onClose }) {
+  const { user } = useAuth();
   const [selected, setSelected] = useState('upi');
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
   const handlePay = async () => {
+    if (user?.role !== 'client') {
+      toast.error('Only clients can make payment');
+      return;
+    }
     setLoading(true);
     try {
       const { data } = await bookingsAPI.pay(bookingId, { paymentMethod: selected });

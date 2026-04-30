@@ -191,6 +191,16 @@ function WorkerBookingCard({ booking, onUpdate }) {
           </button>
         )}
 
+        {/* Awaiting payment: worker waits for client */}
+        {booking.status === 'awaiting_payment' && (
+          <button
+            disabled
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-200 dark:border-white/10 text-gray-500 dark:text-white/50 text-sm font-semibold bg-gray-50 dark:bg-surface-3 opacity-80 cursor-not-allowed"
+          >
+            💳 Waiting for client payment
+          </button>
+        )}
+
         {/* Paid: Confirm payment */}
         {booking.status === 'paid' && (
           <button
@@ -302,7 +312,7 @@ export default function WorkerBookings() {
         ))}
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-5">
+      <div className="max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-4 md:px-6 lg:px-8 py-5">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 size={28} className="animate-spin text-indigo-500" />

@@ -9,6 +9,7 @@ const portfolioRoutes = require('./src/routes/portfolio');
 const reviewRoutes = require('./src/routes/reviews');
 const jobRoutes = require('./src/routes/jobs');
 const bookingRoutes = require('./src/routes/bookings');
+const voiceRoutes = require('./src/routes/voice');
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/voice', voiceRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -49,8 +51,17 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌ Port ${PORT} is already in use. Kill the existing process and restart.`);
+    process.exit(1);
+  } else {
+    throw err;
+  }
 });
 
 module.exports = app;

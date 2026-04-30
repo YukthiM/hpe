@@ -60,7 +60,7 @@ export default function Search() {
 
       {/* Search input */}
       <div className="relative mb-3">
-        <SearchIcon size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" />
+        <SearchIcon size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-faint)' }} />
         <input
           value={filters.skill}
           onChange={(e) => handleFilterChange('skill', e.target.value)}
@@ -68,7 +68,7 @@ export default function Search() {
           className="input-field pl-10 pr-10"
         />
         {filters.skill && (
-          <button onClick={() => clearFilter('skill')} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70">
+          <button onClick={() => clearFilter('skill')} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-faint)' }}>
             <X size={16} />
           </button>
         )}
@@ -79,8 +79,9 @@ export default function Search() {
         <button
           onClick={() => setShowFilters(!showFilters)}
           className={`flex items-center gap-1.5 shrink-0 px-3 py-2 rounded-xl border text-sm font-medium transition ${
-            showFilters ? 'border-primary-500 bg-primary-500/20 text-primary-400' : 'border-white/10 text-white/60'
+            showFilters ? 'border-primary-500 bg-primary-500/20 text-primary-600 dark:text-primary-400' : ''
           }`}
+          style={!showFilters ? { borderColor: 'var(--border-subtle)', color: 'var(--text-muted)' } : {}}
         >
           <SlidersHorizontal size={14} /> Filters
         </button>
@@ -90,8 +91,9 @@ export default function Search() {
             key={o.value}
             onClick={() => handleFilterChange('sort', o.value)}
             className={`shrink-0 px-3 py-2 rounded-xl border text-sm transition ${
-              filters.sort === o.value ? 'border-primary-500 bg-primary-500/20 text-primary-400' : 'border-white/10 text-white/50'
+              filters.sort === o.value ? 'border-primary-500 bg-primary-500/20 text-primary-600 dark:text-primary-400' : ''
             }`}
+            style={filters.sort !== o.value ? { borderColor: 'var(--border-subtle)', color: 'var(--text-muted)' } : {}}
           >
             {o.label}
           </button>
@@ -102,7 +104,7 @@ export default function Search() {
       {showFilters && (
         <div className="card mb-4 space-y-3 animate-slide-up">
           <div>
-            <label className="text-white/60 text-xs font-medium mb-1.5 block">Location</label>
+            <label className="text-xs font-medium mb-1.5 block" style={{ color: 'var(--text-muted)' }}>Location</label>
             <input
               value={filters.location}
               onChange={(e) => handleFilterChange('location', e.target.value)}
@@ -111,15 +113,16 @@ export default function Search() {
             />
           </div>
           <div>
-            <label className="text-white/60 text-xs font-medium mb-1.5 block">Minimum Rating</label>
+            <label className="text-xs font-medium mb-1.5 block" style={{ color: 'var(--text-muted)' }}>Minimum Rating</label>
             <div className="flex gap-2">
               {ratingOptions.map((r) => (
                 <button
                   key={r}
                   onClick={() => handleFilterChange('rating', r)}
                   className={`px-3 py-1.5 rounded-lg text-sm border transition ${
-                    filters.rating === r ? 'border-primary-500 bg-primary-500/20 text-primary-400' : 'border-white/10 text-white/50'
+                    filters.rating === r ? 'border-primary-500 bg-primary-500/20 text-primary-600 dark:text-primary-400' : ''
                   }`}
+                  style={filters.rating !== r ? { borderColor: 'var(--border-subtle)', color: 'var(--text-muted)' } : {}}
                 >
                   {r ? `${r}★+` : 'Any'}
                 </button>
@@ -164,14 +167,14 @@ export default function Search() {
           ))}
         </div>
       ) : workers.length === 0 ? (
-        <div className="text-center py-16 text-white/40">
+        <div className="text-center py-16" style={{ color: 'var(--text-faint)' }}>
           <p className="text-4xl mb-3">🔍</p>
           <p className="font-medium">No workers found</p>
           <p className="text-sm mt-1">Try different filters or skills</p>
         </div>
       ) : (
         <>
-          <p className="text-white/40 text-xs mb-3">{workers.length} workers found</p>
+          <p className="text-xs mb-3" style={{ color: 'var(--text-faint)' }}>{workers.length} workers found</p>
           <div className="space-y-3">
             {workers.map((w) => <WorkerCard key={w._id} worker={w} />)}
           </div>

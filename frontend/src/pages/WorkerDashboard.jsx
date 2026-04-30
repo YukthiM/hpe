@@ -5,7 +5,7 @@ import { jobsAPI } from '../api';
 import ReputationBadge from '../components/ReputationBadge';
 import VerifiedBadge from '../components/VerifiedBadge';
 import StarRating from '../components/StarRating';
-import { Plus, Briefcase, Star, Shield, Share2, Bell, ChevronRight, TrendingUp, CalendarCheck } from 'lucide-react';
+import { Plus, Briefcase, Star, Shield, Share2, Bell, ChevronRight, TrendingUp, CalendarCheck, Mic } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function WorkerDashboard() {
@@ -53,14 +53,14 @@ export default function WorkerDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <p className="text-white/50 text-sm">Good morning 👋</p>
-          <h1 className="font-display text-xl font-bold">{user?.name?.split(' ')[0]}</h1>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Good morning 👋</p>
+          <h1 className="font-display text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{user?.name?.split(' ')[0]}</h1>
         </div>
         <div className="flex gap-2">
-          <button onClick={shareProfile} className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition">
+          <button onClick={shareProfile} className="w-10 h-10 rounded-xl flex items-center justify-center transition" style={{ background: 'var(--overlay-md)', color: 'var(--text-secondary)' }}>
             <Share2 size={18} />
           </button>
-          <button onClick={() => { logout(); navigate('/'); }} className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition text-xs">
+          <button onClick={() => { logout(); navigate('/'); }} className="w-10 h-10 rounded-xl flex items-center justify-center transition text-xs" style={{ background: 'var(--overlay-md)', color: 'var(--text-secondary)' }}>
             Out
           </button>
         </div>
@@ -93,8 +93,8 @@ export default function WorkerDashboard() {
         <div className="flex items-center justify-between">
           <ReputationBadge score={user?.reputationScore} tier={user?.reputationTier} size="md" />
           <div className="text-right">
-            <p className="text-white/50 text-xs">Score Progress</p>
-            <div className="w-24 bg-white/10 rounded-full h-2 mt-1">
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Score Progress</p>
+            <div className="w-24 rounded-full h-2 mt-1" style={{ background: 'var(--overlay-md)' }}>
               <div
                 className="bg-gradient-to-r from-primary-500 to-purple-500 h-2 rounded-full transition-all duration-1000"
                 style={{ width: `${user?.reputationScore || 0}%` }}
@@ -109,8 +109,8 @@ export default function WorkerDashboard() {
         {quickStats.map((s) => (
           <div key={s.label} className="card text-center py-4">
             <div className="flex justify-center mb-1">{s.icon}</div>
-            <p className="font-bold text-xl">{s.value}</p>
-            <p className="text-white/50 text-xs">{s.label}</p>
+            <p className="font-bold text-xl" style={{ color: 'var(--text-primary)' }}>{s.value}</p>
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{s.label}</p>
           </div>
         ))}
       </div>
@@ -118,10 +118,10 @@ export default function WorkerDashboard() {
       {/* Badges */}
       {user?.badges?.length > 0 && (
         <div className="mb-5">
-          <h3 className="font-semibold text-sm text-white/70 mb-3">Your Badges</h3>
+          <h3 className="font-semibold text-sm mb-3" style={{ color: 'var(--text-muted)' }}>Your Badges</h3>
           <div className="flex flex-wrap gap-2">
             {user.badges.map((b, i) => (
-              <span key={i} className="badge bg-primary-500/15 text-primary-300 border border-primary-500/20 px-3 py-1 text-sm">
+              <span key={i} className="badge bg-primary-500/15 text-primary-600 dark:text-primary-300 border border-primary-500/20 px-3 py-1 text-sm">
                 {b.icon} {b.name}
               </span>
             ))}
@@ -129,35 +129,70 @@ export default function WorkerDashboard() {
         </div>
       )}
 
+      {/* ── Voice AI promo banner ── */}
+      <button
+        onClick={() => navigate('/voice-assistant')}
+        className="w-full mb-5 rounded-2xl overflow-hidden relative group active:scale-95 transition-all"
+        style={{
+          background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%)',
+          boxShadow: '0 8px 32px rgba(99,102,241,0.4)',
+        }}
+      >
+        {/* Shimmer */}
+        <div
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 60%)' }}
+        />
+        <div className="flex items-center gap-4 p-4">
+          <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
+            <Mic size={28} className="text-white" />
+          </div>
+          <div className="flex-1 text-left">
+            <p className="font-display font-bold text-white text-base leading-tight">
+              🎙️ Build Profile with Voice
+            </p>
+            <p className="text-white/70 text-xs mt-0.5">
+              Just speak — AI fills your profile instantly
+            </p>
+            <div className="flex gap-1.5 mt-2">
+              {['Hindi', 'English', 'Hinglish'].map(l => (
+                <span key={l} className="text-[10px] bg-white/20 text-white/90 px-2 py-0.5 rounded-full font-medium">{l}</span>
+              ))}
+            </div>
+          </div>
+          <ChevronRight size={20} className="text-white/70 shrink-0" />
+        </div>
+      </button>
+
       {/* Quick actions */}
       <div className="mb-5">
-        <h3 className="font-semibold text-sm text-white/70 mb-3">Quick Actions</h3>
+        <h3 className="font-semibold text-sm mb-3" style={{ color: 'var(--text-muted)' }}>Quick Actions</h3>
         <div className="grid grid-cols-2 gap-3">
           <button onClick={() => navigate('/worker-bookings')} className="card hover:border-primary-500/30 flex items-center gap-3 transition-all active:scale-95">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-              <CalendarCheck size={20} className="text-emerald-400" />
+              <CalendarCheck size={20} className="text-emerald-500 dark:text-emerald-400" />
             </div>
             <div className="text-left">
-              <p className="font-medium text-sm">Bookings</p>
-              <p className="text-white/40 text-xs">View requests</p>
+              <p className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>Bookings</p>
+              <p className="text-xs" style={{ color: 'var(--text-faint)' }}>View requests</p>
             </div>
           </button>
           <button onClick={() => navigate('/jobs')} className="card hover:border-primary-500/30 flex items-center gap-3 transition-all active:scale-95">
-            <div className="w-10 h-10 rounded-xl bg-primary-500/20 flex items-center justify-center">
-              <Plus size={20} className="text-primary-400" />
+            <div className="w-10 h-10 rounded-xl bg-primary-500/15 flex items-center justify-center">
+              <Plus size={20} className="text-primary-600 dark:text-primary-400" />
             </div>
             <div className="text-left">
-              <p className="font-medium text-sm">Add Job</p>
-              <p className="text-white/40 text-xs">Generate QR</p>
+              <p className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>Add Job</p>
+              <p className="text-xs" style={{ color: 'var(--text-faint)' }}>Generate QR</p>
             </div>
           </button>
           <button onClick={() => navigate('/edit-profile')} className="card hover:border-primary-500/30 flex items-center gap-3 transition-all active:scale-95">
-            <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-              <Shield size={20} className="text-purple-400" />
+            <div className="w-10 h-10 rounded-xl bg-purple-500/15 flex items-center justify-center">
+              <Shield size={20} className="text-purple-600 dark:text-purple-400" />
             </div>
             <div className="text-left">
-              <p className="font-medium text-sm">Edit Profile</p>
-              <p className="text-white/40 text-xs">Update info</p>
+              <p className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>Edit Profile</p>
+              <p className="text-xs" style={{ color: 'var(--text-faint)' }}>Update info</p>
             </div>
           </button>
         </div>
@@ -167,22 +202,22 @@ export default function WorkerDashboard() {
       {!loading && jobs.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-sm text-white/70">Recent Jobs</h3>
-            <button onClick={() => navigate('/jobs')} className="text-primary-400 text-xs flex items-center gap-1">
+            <h3 className="font-semibold text-sm" style={{ color: 'var(--text-muted)' }}>Recent Jobs</h3>
+            <button onClick={() => navigate('/jobs')} className="text-primary-600 dark:text-primary-400 text-xs flex items-center gap-1">
               See all <ChevronRight size={14} />
             </button>
           </div>
           <div className="space-y-3">
             {jobs.map((job) => (
               <div key={job._id} className="card flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-surface-3 flex items-center justify-center shrink-0">
-                  <Briefcase size={18} className="text-white/40" />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'var(--bg-surface-3)' }}>
+                  <Briefcase size={18} style={{ color: 'var(--text-faint)' }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm truncate">{job.title}</p>
-                  <p className="text-white/40 text-xs">{job.skill} • {new Date(job.completedAt).toLocaleDateString('en-IN')}</p>
+                  <p className="font-medium text-sm truncate" style={{ color: 'var(--text-primary)' }}>{job.title}</p>
+                  <p className="text-xs" style={{ color: 'var(--text-faint)' }}>{job.skill} • {new Date(job.completedAt).toLocaleDateString('en-IN')}</p>
                 </div>
-                <span className={`badge text-xs ${job.status === 'reviewed' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
+                <span className={`badge text-xs ${job.status === 'reviewed' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-yellow-500/15 text-yellow-600 dark:text-yellow-400'}`}>
                   {job.status === 'reviewed' ? '✓ Reviewed' : 'Pending'}
                 </span>
               </div>
@@ -194,10 +229,10 @@ export default function WorkerDashboard() {
       {/* Skills */}
       {user?.skills?.length > 0 && (
         <div className="mt-5">
-          <h3 className="font-semibold text-sm text-white/70 mb-3">Your Skills</h3>
+          <h3 className="font-semibold text-sm mb-3" style={{ color: 'var(--text-muted)' }}>Your Skills</h3>
           <div className="flex flex-wrap gap-2">
             {user.skills.map((skill) => (
-              <span key={skill} className="badge bg-surface-3 text-white/70 border border-white/10 px-3 py-1">
+              <span key={skill} className="badge px-3 py-1" style={{ background: 'var(--bg-surface-3)', color: 'var(--text-secondary)', borderColor: 'var(--border-subtle)', border: '1px solid' }}>
                 {skill}
               </span>
             ))}

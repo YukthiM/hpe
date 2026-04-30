@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+let didReloadForRoleMismatch = false;
+
 const api = axios.create({
   baseURL: '/api',
   timeout: 15000,
@@ -15,12 +17,32 @@ api.interceptors.request.use((config) => {
 // Handle token expiry globally
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/auth';
     }
+
+    // If the backend denies access based on role, the UI role may be stale
+    // (commonly after logging in/out in a different tab). Resync and reload once.
+    const message = error.response?.data?.message;
+    if (
+      !didReloadForRoleMismatch &&
+      error.response?.status === 403 &&
+      typeof message === 'string' &&
+      message.startsWith('Access denied. Required role:')
+    ) {
+      didReloadForRoleMismatch = true;
+      try {
+        const { data } = await api.get('/auth/me');
+        if (data?.user) localStorage.setItem('user', JSON.stringify(data.user));
+      } catch {
+        // ignore; 401 handler above will redirect if needed
+      }
+      window.location.reload();
+    }
+
     return Promise.reject(error);
   }
 );
@@ -79,4 +101,10 @@ export const bookingsAPI = {
   pay: (id, data) => api.patch(`/bookings/${id}/pay`, data),
   confirmPayment: (id) => api.patch(`/bookings/${id}/confirm`),
   submitReview: (id, data) => api.post(`/bookings/${id}/review`, data),
+};
+
+// Voice AI
+export const voiceAPI = {
+  parse: (transcript) => api.post('/voice/parse', { transcript }),
+  apply: (transcript, overwrite = false) => api.post('/voice/apply', { transcript, overwrite }),
 };

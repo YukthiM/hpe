@@ -13,6 +13,7 @@ import IDVerification from './pages/IDVerification';
 import BookingPage from './pages/BookingPage';
 import ClientBookings from './pages/ClientBookings';
 import WorkerBookings from './pages/WorkerBookings';
+import VoiceAssistant from './pages/VoiceAssistant';
 import BottomNav from './components/BottomNav';
 
 const ProtectedRoute = ({ children, role }) => {
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="/jobs" element={<ProtectedRoute role="worker"><JobHistory /></ProtectedRoute>} />
         <Route path="/verify-id" element={<ProtectedRoute role="worker"><IDVerification /></ProtectedRoute>} />
         <Route path="/worker-bookings" element={<ProtectedRoute role="worker"><WorkerBookings /></ProtectedRoute>} />
+        <Route path="/voice-assistant" element={<ProtectedRoute role="worker"><VoiceAssistant /></ProtectedRoute>} />
 
         {/* Client routes */}
         <Route path="/discover" element={<ProtectedRoute role="client"><ClientDashboard /></ProtectedRoute>} />

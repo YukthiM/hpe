@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { bookingsAPI } from '../api';
 import BookingStatusBadge from '../components/BookingStatusBadge';
 import PaymentModal from '../components/PaymentModal';
@@ -7,37 +8,57 @@ import BookingReviewForm from '../components/BookingReviewForm';
 import { ChevronLeft, MapPin, Phone, Calendar, RefreshCw, Loader2, Clock, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const STEPS = [
-  { key: 'pending',          label: 'Request Sent' },
-  { key: 'accepted',         label: 'Accepted' },
-  { key: 'in_progress',      label: 'In Progress' },
-  { key: 'awaiting_payment', label: 'Mark Complete' },
-  { key: 'paid',             label: 'Payment Done' },
-  { key: 'done',             label: 'Confirmed' },
-];
-const STEP_IDX = Object.fromEntries(STEPS.map((s, i) => [s.key, i]));
+const PIPELINES = {
+  normal: [
+    { key: 'pending',          label: 'Request Sent' },
+    { key: 'accepted',         label: 'Accepted' },
+    { key: 'in_progress',      label: 'In Progress' },
+    { key: 'awaiting_payment', label: 'Awaiting Payment' },
+    { key: 'paid',             label: 'Payment Done' },
+    { key: 'done',             label: 'Confirmed' },
+  ],
+  rejected: [
+    { key: 'pending',  label: 'Request Sent' },
+    { key: 'rejected', label: 'Rejected' },
+  ],
+};
 
 function StatusTimeline({ status }) {
-  const currentIdx = STEP_IDX[status] ?? 0;
+  const steps = status === 'rejected' ? PIPELINES.rejected : PIPELINES.normal;
+  const stepIdx = Object.fromEntries(steps.map((s, i) => [s.key, i]));
+  const currentIdx = stepIdx[status] ?? 0;
+  const accent = status === 'rejected'
+    ? {
+        fill: 'bg-red-600 border-red-600',
+        ring: 'ring-red-400/40',
+        text: 'text-red-600 dark:text-red-400',
+        line: 'bg-red-600',
+      }
+    : {
+        fill: 'bg-indigo-600 border-indigo-600',
+        ring: 'ring-indigo-400/40',
+        text: 'text-indigo-600 dark:text-indigo-400',
+        line: 'bg-indigo-600',
+      };
   return (
     <div className="flex items-center gap-0 mt-4 mb-2 overflow-x-auto pb-1 scrollbar-hide">
-      {STEPS.map((step, i) => {
+      {steps.map((step, i) => {
         const done = i <= currentIdx;
         const active = i === currentIdx;
         return (
           <div key={step.key} className="flex items-center shrink-0">
             <div className="flex flex-col items-center gap-1">
               <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all ${
-                done ? 'bg-indigo-600 border-indigo-600' : 'bg-transparent border-gray-300 dark:border-white/20'
-              } ${active ? 'ring-2 ring-indigo-400/40 ring-offset-1' : ''}`}>
+                done ? accent.fill : 'bg-transparent border-gray-300 dark:border-white/20'
+              } ${active ? `ring-2 ${accent.ring} ring-offset-1` : ''}`}>
                 {done ? <CheckCircle2 size={14} className="text-white" /> : <span className="w-2 h-2 rounded-full bg-gray-300 dark:bg-white/20" />}
               </div>
               <span className={`text-[9px] font-medium w-14 text-center leading-tight ${
-                done ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-400 dark:text-white/30'
+                done ? accent.text : 'text-gray-400 dark:text-white/30'
               }`}>{step.label}</span>
             </div>
-            {i < STEPS.length - 1 && (
-              <div className={`h-0.5 w-6 mb-4 ${i < currentIdx ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-white/10'}`} />
+            {i < steps.length - 1 && (
+              <div className={`h-0.5 w-6 mb-4 ${i < currentIdx ? accent.line : 'bg-gray-200 dark:bg-white/10'}`} />
             )}
           </div>
         );
@@ -50,6 +71,7 @@ function BookingCard({ booking, onUpdate }) {
   const [showPayment, setShowPayment] = useState(false);
   const [actionLoading, setActionLoading] = useState('');
   const [showReview, setShowReview] = useState(false);
+  const { user } = useAuth();
 
   const worker = booking.workerId;
   const workerInitials = worker?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
@@ -96,10 +118,8 @@ function BookingCard({ booking, onUpdate }) {
           </div>
         )}
 
-        {/* Timeline (only for active bookings) */}
-        {!['rejected'].includes(booking.status) && (
-          <StatusTimeline status={booking.status} />
-        )}
+        {/* Timeline */}
+        <StatusTimeline status={booking.status} />
       </div>
 
       {/* Details */}
@@ -138,7 +158,7 @@ function BookingCard({ booking, onUpdate }) {
 
       {/* Action buttons */}
       <div className="px-4 pb-4">
-        {booking.status === 'in_progress' && (
+        {booking.status === 'in_progress' && user?.role === 'client' && (
           <button
             onClick={handleMarkCompleted}
             disabled={actionLoading === 'complete'}
@@ -150,13 +170,19 @@ function BookingCard({ booking, onUpdate }) {
           </button>
         )}
 
-        {booking.status === 'awaiting_payment' && (
+        {booking.status === 'awaiting_payment' && user?.role === 'client' && (
           <button
             onClick={() => setShowPayment(true)}
             className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-sm active:scale-95 transition-all shadow-md"
           >
             💳 Pay Now
           </button>
+        )}
+
+        {booking.status === 'awaiting_payment' && user?.role !== 'client' && (
+          <div className="text-center py-2">
+            <span className="text-xs text-gray-400 dark:text-white/40">Only the client can make payment.</span>
+          </div>
         )}
 
         {booking.status === 'done' && !booking.reviewId && (
@@ -245,7 +271,7 @@ export default function ClientBookings() {
         </button>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-5">
+      <div className="max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-4 md:px-6 lg:px-8 py-5">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 size={28} className="animate-spin text-indigo-500" />

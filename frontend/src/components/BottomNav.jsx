@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Search, Briefcase, User, Grid, CalendarCheck } from 'lucide-react';
+import { Home, Search, Briefcase, User, Mic, CalendarCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
 
@@ -24,7 +24,7 @@ const WorkerNav = () => (
     <NavItem to="/dashboard"       icon={<Home size={21} />}         label="Home" />
     <NavItem to="/worker-bookings" icon={<CalendarCheck size={21} />} label="Bookings" />
     <NavItem to="/jobs"            icon={<Briefcase size={21} />}    label="Jobs" />
-    <NavItem to="/verify-id"       icon={<Grid size={21} />}         label="Verify" />
+    <NavItem to="/voice-assistant" icon={<Mic size={21} />}          label="Voice AI" />
     <NavItem to="/edit-profile"    icon={<User size={21} />}         label="Profile" />
   </>
 );
@@ -43,8 +43,13 @@ export default function BottomNav() {
   if (!user) return null;
 
   return (
-    <nav className="bottom-nav bg-white/95 dark:bg-surface-2/95 backdrop-blur-lg border-t border-gray-100 dark:border-white/5 shadow-lg">
-      <div className="flex items-center justify-around px-2 py-2 max-w-lg mx-auto">
+    <nav className="bottom-nav backdrop-blur-lg shadow-lg"
+      style={{
+        background: 'var(--bg-surface)',
+        borderTop: '1px solid var(--border-subtle)',
+      }}
+    >
+        <div className="flex items-center justify-around px-2 py-2 max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
         {user.role === 'worker' ? <WorkerNav /> : <ClientNav />}
         <ThemeToggle />
       </div>

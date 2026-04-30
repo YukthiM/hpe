@@ -8,22 +8,55 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const initAuth = async () => {
+    let cancelled = false;
+
+    const syncFromToken = async () => {
       const token = localStorage.getItem('token');
       const savedUser = localStorage.getItem('user');
-      if (token && savedUser) {
-        setUser(JSON.parse(savedUser));
+
+      if (!token) {
+        if (!cancelled) setUser(null);
+        return;
+      }
+
+      if (savedUser && !cancelled) {
         try {
-          const { data } = await authAPI.getMe();
-          setUser(data.user);
-          localStorage.setItem('user', JSON.stringify(data.user));
+          setUser(JSON.parse(savedUser));
         } catch {
-          logout();
+          // ignore parse errors; we'll correct from /me below
         }
       }
-      setLoading(false);
+
+      try {
+        const { data } = await authAPI.getMe();
+        if (cancelled) return;
+        setUser(data.user);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      } catch {
+        if (!cancelled) logout();
+      }
     };
-    initAuth();
+
+    const init = async () => {
+      await syncFromToken();
+      if (!cancelled) setLoading(false);
+    };
+
+    const onStorage = (e) => {
+      if (e.key !== 'token' && e.key !== 'user') return;
+      setLoading(true);
+      syncFromToken().finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    };
+
+    window.addEventListener('storage', onStorage);
+    init();
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener('storage', onStorage);
+    };
   }, []);
 
   const login = (token, userData) => {
