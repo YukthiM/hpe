@@ -5,7 +5,7 @@ import { jobsAPI } from '../api';
 import ReputationBadge from '../components/ReputationBadge';
 import VerifiedBadge from '../components/VerifiedBadge';
 import StarRating from '../components/StarRating';
-import { Plus, Briefcase, Star, Shield, Share2, Bell, ChevronRight, TrendingUp } from 'lucide-react';
+import { Plus, Briefcase, Star, Shield, Share2, Bell, ChevronRight, TrendingUp, CalendarCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function WorkerDashboard() {
@@ -133,6 +133,15 @@ export default function WorkerDashboard() {
       <div className="mb-5">
         <h3 className="font-semibold text-sm text-white/70 mb-3">Quick Actions</h3>
         <div className="grid grid-cols-2 gap-3">
+          <button onClick={() => navigate('/worker-bookings')} className="card hover:border-primary-500/30 flex items-center gap-3 transition-all active:scale-95">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+              <CalendarCheck size={20} className="text-emerald-400" />
+            </div>
+            <div className="text-left">
+              <p className="font-medium text-sm">Bookings</p>
+              <p className="text-white/40 text-xs">View requests</p>
+            </div>
+          </button>
           <button onClick={() => navigate('/jobs')} className="card hover:border-primary-500/30 flex items-center gap-3 transition-all active:scale-95">
             <div className="w-10 h-10 rounded-xl bg-primary-500/20 flex items-center justify-center">
               <Plus size={20} className="text-primary-400" />

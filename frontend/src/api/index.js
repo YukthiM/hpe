@@ -66,3 +66,17 @@ export const portfolioAPI = {
   addCertification: (formData) => api.post('/portfolio/certifications', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
   submitID: (formData) => api.post('/portfolio/verify-id', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
 };
+
+// Bookings
+export const bookingsAPI = {
+  create: (data) => api.post('/bookings', data),
+  getMyBookings: () => api.get('/bookings/my'),
+  getWorkerBookings: () => api.get('/bookings/worker'),
+  getById: (id) => api.get(`/bookings/${id}`),
+  respond: (id, action, rejectionReason) => api.patch(`/bookings/${id}/respond`, { action, rejectionReason }),
+  startJob: (id) => api.patch(`/bookings/${id}/start`),
+  markCompleted: (id) => api.patch(`/bookings/${id}/complete`),
+  pay: (id, data) => api.patch(`/bookings/${id}/pay`, data),
+  confirmPayment: (id) => api.patch(`/bookings/${id}/confirm`),
+  submitReview: (id, data) => api.post(`/bookings/${id}/review`, data),
+};

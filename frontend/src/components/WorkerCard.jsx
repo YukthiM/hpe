@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import StarRating from './StarRating';
 import ReputationBadge from './ReputationBadge';
 import VerifiedBadge from './VerifiedBadge';
-import { MapPin, Briefcase } from 'lucide-react';
+import { MapPin, Briefcase, CalendarPlus } from 'lucide-react';
 
 export default function WorkerCard({ worker }) {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const initials = worker.name
     .split(' ')
@@ -15,11 +17,11 @@ export default function WorkerCard({ worker }) {
     .slice(0, 2);
 
   return (
-    <div
-      onClick={() => navigate(`/profile/${worker.publicProfileSlug || worker._id}`)}
-      className="card hover:border-primary-500/30 hover:shadow-glow cursor-pointer transition-all duration-300 active:scale-98 animate-fade-in"
-    >
-      <div className="flex items-start gap-3">
+    <div className="card hover:border-primary-500/30 hover:shadow-glow cursor-pointer transition-all duration-300 active:scale-[0.99] animate-fade-in">
+      <div
+        onClick={() => navigate(`/profile/${worker.publicProfileSlug || worker._id}`)}
+        className="flex items-start gap-3"
+      >
         {/* Avatar */}
         <div className="relative shrink-0">
           {worker.avatar ? (
@@ -46,10 +48,10 @@ export default function WorkerCard({ worker }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <h3 className="font-semibold text-white truncate">{worker.name}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white truncate">{worker.name}</h3>
               <div className="flex items-center gap-1 mt-0.5">
                 <StarRating rating={worker.averageRating} size={12} />
-                <span className="text-white/50 text-xs">
+                <span className="text-gray-500 dark:text-white/50 text-xs">
                   {worker.averageRating?.toFixed(1)} ({worker.totalRatings})
                 </span>
               </div>
@@ -58,7 +60,7 @@ export default function WorkerCard({ worker }) {
           </div>
 
           {/* Location & Jobs */}
-          <div className="flex items-center gap-3 mt-2 text-white/50 text-xs">
+          <div className="flex items-center gap-3 mt-2 text-gray-400 dark:text-white/50 text-xs">
             {worker.location && (
               <span className="flex items-center gap-1">
                 <MapPin size={11} /> {worker.location}
@@ -78,12 +80,25 @@ export default function WorkerCard({ worker }) {
                 </span>
               ))}
               {worker.skills.length > 3 && (
-                <span className="text-xs text-white/30">+{worker.skills.length - 3}</span>
+                <span className="text-xs text-gray-300 dark:text-white/30">+{worker.skills.length - 3}</span>
               )}
             </div>
           )}
         </div>
       </div>
+
+      {/* Book Now button — only for clients */}
+      {user?.role === 'client' && (
+        <button
+          onClick={(e) => { e.stopPropagation(); navigate(`/book/${worker._id}`); }}
+          className="mt-3 w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl
+            bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-xs
+            hover:from-indigo-500 hover:to-purple-500 active:scale-95 transition-all shadow-sm"
+        >
+          <CalendarPlus size={14} /> Book Now
+        </button>
+      )}
     </div>
   );
 }
+

@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { workersAPI, reviewsAPI } from '../api';
+import { useAuth } from '../context/AuthContext';
 import ReputationBadge from '../components/ReputationBadge';
 import StarRating from '../components/StarRating';
 import VerifiedBadge from '../components/VerifiedBadge';
-import { MapPin, Briefcase, Share2, ChevronLeft, Shield, ExternalLink, Clock } from 'lucide-react';
+import { MapPin, Briefcase, Share2, ChevronLeft, Shield, ExternalLink, Clock, CalendarPlus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function WorkerProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -127,6 +129,21 @@ export default function WorkerProfile() {
               </span>
             ))}
           </div>
+        )}
+
+        {/* Book Now CTA — only visible to clients */}
+        {user?.role === 'client' && (
+          <button
+            onClick={() => navigate(`/book/${worker._id}`)}
+            className="mt-4 w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl
+              bg-gradient-to-r from-indigo-600 to-purple-600
+              text-white font-bold text-sm shadow-lg
+              hover:from-indigo-500 hover:to-purple-500
+              active:scale-95 transition-all duration-200"
+          >
+            <CalendarPlus size={18} />
+            Book Now
+          </button>
         )}
       </div>
 

@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Google Fonts ──────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap');
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -12,10 +15,26 @@
     scroll-behavior: smooth;
   }
 
-  body {
-    @apply bg-surface text-white font-sans antialiased;
+  /* ── DARK theme (default) ───────────── */
+  html.dark body {
+    @apply bg-surface text-white;
     min-height: 100dvh;
     overflow-x: hidden;
+  }
+
+  /* ── LIGHT theme ────────────────────── */
+  html:not(.dark) body {
+    background-color: #f5f5fa;
+    color: #111827;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
 
   #root {
@@ -26,67 +45,99 @@
 }
 
 @layer components {
-  /* Glass card effect */
+  /* ── Glass card ─────────────────────── */
   .glass {
     @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl;
+  }
+  html:not(.dark) .glass {
+    background: rgba(255,255,255,0.7);
+    border-color: rgba(0,0,0,0.06);
   }
 
   .glass-dark {
     @apply bg-surface-2/80 backdrop-blur-md border border-white/5 rounded-2xl;
   }
 
-  /* Gradient text */
+  /* ── Gradient text ──────────────────── */
   .gradient-text {
     @apply bg-gradient-to-r from-primary-400 via-purple-400 to-pink-400 bg-clip-text text-transparent;
   }
 
-  /* Button styles */
+  /* ── Buttons ────────────────────────── */
   .btn-primary {
-    @apply bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white font-semibold 
-           py-3 px-6 rounded-xl transition-all duration-200 shadow-glow hover:shadow-glow-lg 
+    @apply bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white font-semibold
+           py-3 px-6 rounded-xl transition-all duration-200 shadow-glow hover:shadow-glow-lg
            active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100;
+  }
+  html:not(.dark) .btn-primary {
+    @apply shadow-md;
   }
 
   .btn-secondary {
-    @apply bg-white/10 hover:bg-white/20 active:bg-white/5 text-white font-semibold 
-           py-3 px-6 rounded-xl border border-white/20 transition-all duration-200 
+    @apply bg-white/10 hover:bg-white/20 active:bg-white/5 text-white font-semibold
+           py-3 px-6 rounded-xl border border-white/20 transition-all duration-200
            active:scale-95 disabled:opacity-50;
+  }
+  html:not(.dark) .btn-secondary {
+    background: rgba(0,0,0,0.05);
+    color: #374151;
+    border-color: rgba(0,0,0,0.1);
+  }
+  html:not(.dark) .btn-secondary:hover {
+    background: rgba(0,0,0,0.08);
   }
 
   .btn-ghost {
-    @apply text-primary-400 hover:text-primary-300 hover:bg-primary-500/10 
+    @apply text-primary-400 hover:text-primary-300 hover:bg-primary-500/10
            font-medium py-2 px-4 rounded-lg transition-all duration-200;
   }
 
-  /* Input styles */
+  /* ── Inputs ─────────────────────────── */
   .input-field {
-    @apply w-full bg-surface-3 border border-white/10 rounded-xl px-4 py-3 text-white 
-           placeholder-white/40 focus:outline-none focus:border-primary-500 focus:ring-2 
+    @apply w-full bg-surface-3 border border-white/10 rounded-xl px-4 py-3 text-white
+           placeholder-white/40 focus:outline-none focus:border-primary-500 focus:ring-2
            focus:ring-primary-500/20 transition-all duration-200;
   }
+  html:not(.dark) .input-field {
+    background: #ffffff;
+    border-color: #e5e7eb;
+    color: #111827;
+  }
+  html:not(.dark) .input-field::placeholder {
+    color: #9ca3af;
+  }
+  html:not(.dark) .input-field:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+  }
 
-  /* Cards */
+  /* ── Cards ──────────────────────────── */
   .card {
     @apply bg-surface-2 border border-white/5 rounded-2xl p-5 shadow-card;
   }
+  html:not(.dark) .card {
+    background: #ffffff;
+    border-color: #f3f4f6;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
 
-  /* Badge */
+  /* ── Badge ──────────────────────────── */
   .badge {
     @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold;
   }
 
-  /* Bottom nav safe area */
+  /* ── Bottom nav ─────────────────────── */
   .bottom-nav {
     @apply fixed bottom-0 left-0 right-0 z-50;
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  /* Page container with bottom nav offset */
+  /* ── Page container ─────────────────── */
   .page-container {
     @apply max-w-lg mx-auto px-4 pb-24 pt-4 min-h-screen;
   }
 
-  /* Scrollbar hide */
+  /* ── Scrollbar hide ─────────────────── */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -95,40 +146,48 @@
     display: none;
   }
 
-  /* Star rating */
+  /* ── Stars ──────────────────────────── */
   .star-filled {
     @apply text-yellow-400 fill-yellow-400;
   }
-
   .star-empty {
     @apply text-white/20;
   }
+  html:not(.dark) .star-empty {
+    color: #d1d5db;
+  }
 
-  /* Tier badge colors */
-  .tier-bronze {
-    @apply bg-amber-900/30 text-amber-400 border border-amber-700/30;
-  }
-  .tier-silver {
-    @apply bg-slate-700/30 text-slate-300 border border-slate-500/30;
-  }
-  .tier-gold {
-    @apply bg-yellow-900/30 text-yellow-400 border border-yellow-700/30;
-  }
-  .tier-platinum {
-    @apply bg-primary-900/30 text-primary-300 border border-primary-700/30;
-  }
+  /* ── Tier badges ────────────────────── */
+  .tier-bronze  { @apply bg-amber-900/30 text-amber-400  border border-amber-700/30; }
+  .tier-silver  { @apply bg-slate-700/30 text-slate-300  border border-slate-500/30; }
+  .tier-gold    { @apply bg-yellow-900/30 text-yellow-400 border border-yellow-700/30; }
+  .tier-platinum{ @apply bg-primary-900/30 text-primary-300 border border-primary-700/30; }
+
+  html:not(.dark) .tier-bronze   { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+  html:not(.dark) .tier-silver   { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+  html:not(.dark) .tier-gold     { background: #fefce8; color: #854d0e; border-color: #fde047; }
+  html:not(.dark) .tier-platinum { background: #ede9fe; color: #5b21b6; border-color: #a78bfa; }
 }
 
 @layer utilities {
   .safe-bottom {
     padding-bottom: calc(5rem + env(safe-area-inset-bottom));
   }
+
+  .animate-slide-up {
+    animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 }
 
-/* Custom scrollbar for desktop */
+/* ── Custom scrollbar (desktop) ─────── */
 @media (min-width: 768px) {
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: #161628; }
   ::-webkit-scrollbar-thumb { background: #3d36b3; border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: #6c63ff; }
+
+  html:not(.dark) ::-webkit-scrollbar-track { background: #f3f4f6; }
+  html:not(.dark) ::-webkit-scrollbar-thumb { background: #c7d2fe; }
+  html:not(.dark) ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
 }
+
